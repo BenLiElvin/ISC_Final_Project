@@ -114,3 +114,26 @@ posterior = replicate(N_simulation,generate_abc_sample(
                                             epsilon))
 
 posterior_samples[[2]] = t(posterior)
+
+
+cond.names = c("outburst","strain")
+cond.label = list(c("A77","A80"),c("B75","A78"))
+
+for (i in 1:2){
+posterior_sample = posterior_samples[[i]]
+plot_matrix = rbind(posterior_sample[,1:2],posterior_sample[,3:4])
+cond_vector = rep(cond.label[[i]],each = N_simulation)
+plot_dataframe = data.frame(cond_vector,plot_matrix)
+colnames(plot_dataframe) = c(cond.names[i],"qc","qh")
+
+
+p = ggplot(data=plot_dataframe,aes(x=qh,y=qc,
+                                    color=UQ(as.name(cond.names[i]))
+                                    ))+
+  geom_point(shape = 1) +
+  xlim(c(0,1)) +
+  ylim(c(0,1)) +
+  coord_equal()
+
+plot(p)
+}
